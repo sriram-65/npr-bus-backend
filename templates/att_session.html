@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Dashboard</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f8fafc;
+      color: #222;
+      text-align: center;
+      margin: 0;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #2563eb;
+    }
+
+    #countdown {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    #otp-code {
+      font-size: 1.5rem;
+      color: #16a34a;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s, transform 0.1s;
+      margin: 8px;
+    }
+
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background: #1d4ed8;
+      transform: scale(1.05);
+    }
+
+    table {
+      margin: 30px auto;
+      border-collapse: collapse;
+      width: 80%;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: 0.3s;
+    }
+
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+    }
+
+    th {
+      background: #2563eb;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f3f4f6;
+    }
+
+    tr:hover {
+      background: #e0e7ff;
+      transition: 0.3s;
+    }
+
+    /* Animation when refreshed */
+    .refreshing {
+      animation: fade 0.5s ease-in-out;
+    }
+
+    @keyframes fade {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Session Created</h1>
+  <p><b>Countdown:</b> <span id="countdown">60</span> sec</p>
+  <p><b>Admin:</b> {{admin._Name}}</p>
+
+  <h1>Here’s Your OTP: <b id="otp-code"></b></h1>
+  <div>
+    <button id="gotp">Generate OTP</button>
+    <button id="refresh">🔄 Refresh Table</button>
+  </div>
+
+  <h2>Student Attendance</h2>
+  <table id="attendance-table">
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        <th>Attendance</th>
+      </tr>
+    </thead>
+    <tbody id="student"></tbody>
+  </table>
+
+  <script>
+    const gotp = document.getElementById("gotp");
+    const refresh = document.getElementById("refresh");
+    const otp_code = document.getElementById("otp-code");
+    const countdown = document.getElementById("countdown");
+    const studentBody = document.getElementById("student");
+    const table = document.getElementById("attendance-table");
+    let TIME = 60;
+
+    function formatDate() {
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, "0");
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const year = today.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+    function setCountdown() {
+      gotp.disabled = true;
+      let timeLeft = TIME;
+      countdown.innerText = timeLeft;
+
+      let timer = setInterval(() => {
+        timeLeft--;
+        countdown.innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          gotp.disabled = false;
+          otp_code.innerText = "OTP Has Expired";
+          otp_code.style.color = "red";
+        }
+      }, 1000);
+    }
+
+    gotp.onclick = function() {
+      fetch(`/api/otp/generate/otp/{{admin.Bus_No}}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ admin_uid: "{{admin.Uid}}" })
+      })
+      .then(res => res.json())
+      .then(data => {
+        otp_code.style.color = "#16a34a";
+        otp_code.innerText = data.OTP;
+        setCountdown();
+      })
+      .catch(err => console.error("Error generating OTP:", err));
+    };
+
+    async function getStudents() {
+      const res = await fetch(`/api/admin/get-students/37/${formatDate()}`);
+      return res.json();
+    }
+
+    function renderStudents(data) {
+      studentBody.innerHTML = "";
+      data.data.forEach(student => {
+        const tr = document.createElement("tr");
+
+        const nameTd = document.createElement("td");
+        nameTd.textContent = student.name;
+
+        const statusTd = document.createElement("td");
+        statusTd.textContent = student.otp_verfied ? "Present" : "Absent";
+        statusTd.style.color = student.otp_verfied ? "#16a34a" : "#dc2626";
+
+        tr.appendChild(nameTd);
+        tr.appendChild(statusTd);
+        studentBody.appendChild(tr);
+      });
+    }
+
+    async function refreshTable() {
+      table.classList.add("refreshing");
+      const data = await getStudents();
+      renderStudents(data);
+      setTimeout(() => table.classList.remove("refreshing"), 500);
+    }
+
+    window.addEventListener("DOMContentLoaded", refreshTable);
+    refresh.addEventListener("click", refreshTable);
+  </script>
+</body>
+</html>
