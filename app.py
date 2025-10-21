@@ -11,6 +11,13 @@ CORS(app , supports_credentials=True)
 
 app.secret_key = '@MAHAKALZI@THUNAI'
 app.permanent_session_lifetime = timedelta(days=5)
+
+app.config.update(
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True,    
+    SESSION_PERMANENT=True
+)
+
 app.register_blueprint(Auth , url_prefix='/api/auth')
 app.register_blueprint(Otp , url_prefix='/api/otp')
 app.register_blueprint(Role_Student , url_prefix='/api')
