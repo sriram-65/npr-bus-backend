@@ -88,6 +88,7 @@ def Create_Student(name='op' , email=None , uid='op' , pic='op' , phone='op' , e
                 STUDENTS.insert_one(data)
                 session['email'] = data['_Email']
                 session['role'] = data['Role']
+                session.permanent = True
 
             elif set_role.get("yes")==True:
                 data = {
@@ -110,14 +111,17 @@ def Create_Student(name='op' , email=None , uid='op' , pic='op' , phone='op' , e
                 STUDENTS.insert_one(data)
                 session['email'] = data['_Email']
                 session['role'] = data['Role']
+                session.permanent = True
             else:
                 return jsonify(Show_Bad_Error("Unexpected Error Occured")) , 400
             
             return {"msg":"User Created and inserted Sucessfully"  , 'new':True , 'role':session['role'], "Success":True}
         else:
             session['email'] = email
+            
             Get_role = STUDENTS.find_one({"_Email":email})
             session['role'] = Get_role['Role']
+            session.permanent = True
             return {"msg":"User Created and intialzed Sucessfully"  , 'new':False , 'role':Get_role['Role'],  "Success":True}
     except:
         return jsonify(Show_Bad_Error("Unexpted Error !"))  , 400
