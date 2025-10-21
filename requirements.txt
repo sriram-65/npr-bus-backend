@@ -1,0 +1,5 @@
+flask
+pymongo
+flask_cors
+gunicorn
+firebase_admin
