@@ -138,15 +138,20 @@
       let timer = setInterval(() => {
         timeLeft--;
         countdown.innerText = timeLeft;
+        let f = setInterval(()=>{
+            refreshTable()
+        })
         if (timeLeft <= 0) {
           clearInterval(timer);
+          clearInterval(f)
           gotp.disabled = false;
           otp_code.innerText = "OTP Has Expired";
           otp_code.style.color = "red";
         }
       }, 1000);
     }
-
+    
+    
     gotp.onclick = function() {
       fetch(`/api/otp/generate/otp/{{admin.Bus_No}}`, {
         method: "POST",
@@ -191,6 +196,9 @@
       renderStudents(data);
       setTimeout(() => table.classList.remove("refreshing"), 500);
     }
+
+
+    
 
     window.addEventListener("DOMContentLoaded", refreshTable);
     refresh.addEventListener("click", refreshTable);
