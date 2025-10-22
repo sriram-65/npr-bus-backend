@@ -38,6 +38,7 @@ def Gen_otp_Place():
             "otp_verfied":False,
             "date":date,
             "busno":Student['Bus_No'],
+            "role":Student['Role'],
             "Started":False,
             "created_at":datetime.datetime.utcnow()
         }
