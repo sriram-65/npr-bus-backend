@@ -140,7 +140,7 @@
         countdown.innerText = timeLeft;
         let f = setInterval(()=>{
             refreshTable()
-        })
+        } , 1000)
         if (timeLeft <= 0) {
           clearInterval(timer);
           clearInterval(f)
