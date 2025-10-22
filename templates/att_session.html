@@ -134,16 +134,13 @@
       gotp.disabled = true;
       let timeLeft = TIME;
       countdown.innerText = timeLeft;
-
+      
       let timer = setInterval(() => {
         timeLeft--;
         countdown.innerText = timeLeft;
-        let f = setInterval(()=>{
-            refreshTable()
-        } , 1000)
+        
         if (timeLeft <= 0) {
           clearInterval(timer);
-          clearInterval(f)
           gotp.disabled = false;
           otp_code.innerText = "OTP Has Expired";
           otp_code.style.color = "red";
