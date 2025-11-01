@@ -1,0 +1,5 @@
+flask
+gunicorn
+cloudinary
+flask_cors
+pymongo
