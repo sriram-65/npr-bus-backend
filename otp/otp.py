@@ -1,5 +1,5 @@
 from flask import Flask , Blueprint , request , jsonify
-from db.db import REGISTERS_OTP_BUSES  , STUDENTS  , STUDENTS_OTP
+from db.db import REGISTERS_OTP_BUSES  , STUDENTS  , STUDENTS_OTP , ADMIN_PLACEHOLDERS
 from auth.handlers import Show_Bad_Error , Show_Server_Error
 from utils.generate_otp import Generate_OTP
 import datetime
@@ -33,6 +33,9 @@ def Gen_otp_Place():
         data = {
             "name":Student.get("_Name"),
             "email":Student.get("_Email"),
+            "dep":Student['Department'] ,
+            "year":Student['Year'],
+            "gender":Student['Gender'],
             "Attendanced_By":None,
             "uid":uid,
             "otp_verfied":False,
@@ -60,15 +63,13 @@ def Generate_Otp(busno):
       otp_number =  Generate_OTP()
       if otp_number:
           now = datetime.datetime.now()
-          ex_time = now + datetime.timedelta(minutes=1)
+          ex_time = now + datetime.timedelta(seconds=25)
           
           buses = REGISTERS_OTP_BUSES.find_one({"busno":int(busno)})
           if not buses:
                 
             data = {
                 "busno":int(busno),
-                "Admin_uid":Admin_Uid,
-                "Admin_Name":admin['_Name'],
                 "otp_ex":ex_time,
                 "otp_num":int(otp_number)
             }
@@ -100,17 +101,18 @@ def Verify_Otp(busno):
         Student = STUDENTS_OTP.find_one({"date":date})
         if not Student:
            return jsonify(Show_Bad_Error("Student Not Found")) , 400
-    
+         
+        otp_number = REGISTERS_OTP_BUSES.find_one({"busno":int(busno)})
+        buses = ADMIN_PLACEHOLDERS.find_one({"date":date , "busno":int(busno)})
         
-        buses = REGISTERS_OTP_BUSES.find_one({"busno":int(busno)})
         if not buses:
             return jsonify(Show_Bad_Error("Bus not Found to Verify the OTP")) , 400
         
         now = datetime.datetime.now()
-        if now>=buses.get("otp_ex"):
+        if now>=otp_number.get("otp_ex"):
             return jsonify(Show_Bad_Error("OTP has Been Expired")), 400
         
-        if buses.get("otp_num") == int(user_otp):
+        if otp_number.get("otp_num") == int(user_otp):
             STUDENTS_OTP.find_one_and_update({"date":date , "uid":student_uid} , {"$set":{
                 "otp_verfied":True,
                 "Attendanced_By":buses['Admin_Name']
@@ -118,9 +120,9 @@ def Verify_Otp(busno):
             return jsonify({"Success":True , "msg":"OTP has Been Verfied Successfully , now Marked has PRESENT !"}) , 200
         else:
             return jsonify(Show_Bad_Error("Invalid OTP"))
-    except:
-        return jsonify(Show_Server_Error())
-
+    except Exception as e:
+        print(e)
+        return jsonify(Show_Server_Error()) , 500
 
 
 
