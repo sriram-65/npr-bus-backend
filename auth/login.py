@@ -4,7 +4,7 @@ from .handlers import Show_Bad_Error , Show_Server_Error , Show_Success_Msg
 import firebase_admin
 import datetime
 from db.db import STUDENTS
-from utils.helper import JSON_Parser , Check_Role
+from utils.helper import JSON_Parser , Check_Role , Upload_Profile
 
 Auth = Blueprint("Auth" , __name__)
 
@@ -62,8 +62,9 @@ def Google_Login():
 def Create_Student(name='op' , email=None , uid='op' , pic='op' , phone='op' , email_verfied='op' , new=True):
     try:
         if new==True:
+            Profile_pic = Upload_Profile(pic)
             set_role = Check_Role(email)
-             
+            
             if set_role.get("yes")==False:
                 data = {
                     "_Name":name,
@@ -71,7 +72,7 @@ def Create_Student(name='op' , email=None , uid='op' , pic='op' , phone='op' , e
                     "Uid":uid,
 
                     "From_Google":{
-                        "Pic":pic,
+                        "Pic":Profile_pic if Profile_pic else "Not Found",
                         "Phone_no":phone,
                         "Email_Verfication":email_verfied
                     },
@@ -88,15 +89,17 @@ def Create_Student(name='op' , email=None , uid='op' , pic='op' , phone='op' , e
                 STUDENTS.insert_one(data)
                 session['email'] = data['_Email']
                 session['role'] = data['Role']
+                session.permanent = True
 
             elif set_role.get("yes")==True:
+                Profile_pic = Upload_Profile(pic)
                 data = {
                     "_Name":name,
                     "_Email":email,
                     "Uid":uid,
 
                     "From_Google":{
-                        "Pic":pic,
+                        "Pic":Profile_pic if Profile_pic else "Not Found",
                         "Phone_no":phone,
                         "Email_Verfication":email_verfied
                     },
@@ -110,14 +113,17 @@ def Create_Student(name='op' , email=None , uid='op' , pic='op' , phone='op' , e
                 STUDENTS.insert_one(data)
                 session['email'] = data['_Email']
                 session['role'] = data['Role']
+                session.permanent = True
             else:
                 return jsonify(Show_Bad_Error("Unexpected Error Occured")) , 400
             
             return {"msg":"User Created and inserted Sucessfully"  , 'new':True , 'role':session['role'], "Success":True}
         else:
             session['email'] = email
+            
             Get_role = STUDENTS.find_one({"_Email":email})
             session['role'] = Get_role['Role']
+            session.permanent = True
             return {"msg":"User Created and intialzed Sucessfully"  , 'new':False , 'role':Get_role['Role'],  "Success":True}
     except:
         return jsonify(Show_Bad_Error("Unexpted Error !"))  , 400
@@ -128,6 +134,7 @@ def Create_Student(name='op' , email=None , uid='op' , pic='op' , phone='op' , e
 def Me():
     try:
         email = session.get("email")
+        
         if email:
             student = STUDENTS.find_one({"_Email":email})
             if student:
