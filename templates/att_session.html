@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Session Dashboard</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     body {
       font-family: "Poppins", sans-serif;
@@ -80,7 +84,7 @@
       transition: 0.3s;
     }
 
-    /* Animation when refreshed */
+   
     .refreshing {
       animation: fade 0.5s ease-in-out;
     }
@@ -93,34 +97,25 @@
 </head>
 <body>
   <h1>Session Created</h1>
-  <p><b>Countdown:</b> <span id="countdown">60</span> sec</p>
+  <p><b>Countdown:</b> <span id="countdown">25</span> sec</p>
   <p><b>Admin:</b> {{admin._Name}}</p>
 
   <h1>Here’s Your OTP: <b id="otp-code"></b></h1>
   <div>
     <button id="gotp">Generate OTP</button>
+    <button id="ExtCV">Export to CV</button>
     <button id="refresh">🔄 Refresh Table</button>
   </div>
 
   <h2>Student Attendance</h2>
-  <table id="attendance-table">
-    <thead>
-      <tr>
-        <th>Student Name</th>
-        <th>Attendance</th>
-      </tr>
-    </thead>
-    <tbody id="student"></tbody>
-  </table>
+   {%  include 'filters.html' %}
+ 
 
   <script>
     const gotp = document.getElementById("gotp");
-    const refresh = document.getElementById("refresh");
     const otp_code = document.getElementById("otp-code");
     const countdown = document.getElementById("countdown");
-    const studentBody = document.getElementById("student");
-    const table = document.getElementById("attendance-table");
-    let TIME = 60;
+    let TIME = 25;
 
     function formatDate() {
       const today = new Date();
@@ -134,10 +129,11 @@
       gotp.disabled = true;
       let timeLeft = TIME;
       countdown.innerText = timeLeft;
-
+      
       let timer = setInterval(() => {
         timeLeft--;
         countdown.innerText = timeLeft;
+        
         if (timeLeft <= 0) {
           clearInterval(timer);
           gotp.disabled = false;
@@ -146,7 +142,8 @@
         }
       }, 1000);
     }
-
+    
+    
     gotp.onclick = function() {
       fetch(`/api/otp/generate/otp/{{admin.Bus_No}}`, {
         method: "POST",
@@ -162,38 +159,40 @@
       .catch(err => console.error("Error generating OTP:", err));
     };
 
-    async function getStudents() {
-      const res = await fetch(`/api/admin/get-students/37/${formatDate()}`);
-      return res.json();
+    let ExtCV = document.getElementById("ExtCV")
+    ExtCV.onclick = function(){
+       if (!table) {
+         alert("No data found in table!");
+          return;
+      }
+
+      
+    let csv = [];
+    const rows = table.querySelectorAll("tr");
+    
+    
+    for (let row of rows) {
+      const cols = row.querySelectorAll("th, td");
+      let rowData = [];
+      cols.forEach(col => rowData.push(col.innerText.replace(/,/g, ""))); 
+      csv.push(rowData.join(","));
     }
 
-    function renderStudents(data) {
-      studentBody.innerHTML = "";
-      data.data.forEach(student => {
-        const tr = document.createElement("tr");
+    
+    const csvContent = new Blob([csv.join("\n")], { type: "text/csv" });
+    const url = window.URL.createObjectURL(csvContent);
 
-        const nameTd = document.createElement("td");
-        nameTd.textContent = student.name;
+    
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Attendance_${formatDate()}.csv`;
+    a.click();
 
-        const statusTd = document.createElement("td");
-        statusTd.textContent = student.otp_verfied ? "Present" : "Absent";
-        statusTd.style.color = student.otp_verfied ? "#16a34a" : "#dc2626";
-
-        tr.appendChild(nameTd);
-        tr.appendChild(statusTd);
-        studentBody.appendChild(tr);
-      });
+   
+    window.URL.revokeObjectURL(url);
     }
 
-    async function refreshTable() {
-      table.classList.add("refreshing");
-      const data = await getStudents();
-      renderStudents(data);
-      setTimeout(() => table.classList.remove("refreshing"), 500);
-    }
 
-    window.addEventListener("DOMContentLoaded", refreshTable);
-    refresh.addEventListener("click", refreshTable);
   </script>
 </body>
 </html>
