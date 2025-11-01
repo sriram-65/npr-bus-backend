@@ -45,7 +45,7 @@ def Create_Session_Attedance(admin_uid , date):
             return render_template("Err.html" , e='Admin was not Found')
         
         if PlceHolder:
-            return render_template("att_session.html" , admin=Admin)
+            return render_template("att_session.html" , admin=Admin , busno=Admin['Bus_No'])
         
         STUDENTS_OTP.update_many({"date":date} , {"$set":{
             "Started":True
@@ -54,12 +54,13 @@ def Create_Session_Attedance(admin_uid , date):
         data = {
             "Admin_uid":admin_uid,
             "date":date,
+            "busno":Admin['Bus_No'],
             "Admin_Name":Admin['_Name'],
             "Admin_Email":Admin['_Email']
         }
         ADMIN_PLACEHOLDERS.insert_one(data)
 
-        return render_template("att_session.html" , admin=Admin)
+        return render_template("att_session.html" , admin=Admin , busno=Admin['Bus_No'])
     except:
             return render_template("Err.html" , e='Server Error')
 
@@ -75,15 +76,6 @@ def Check_Session(date):
     except:
         return jsonify(Show_Server_Error())
 
-# @Role_Admin.route('/sort/<sortby>/<busno>')
-# def sortBy(sortby , busno):
-#     try:
-#        split_section = sortby.split(":")
-#        if split_section:
-           
-#     except:
-#         return jsonify("error")
-
 
  
 @Role_Admin.route("/get-students/<busno>/<date>")
@@ -98,9 +90,29 @@ def Get_Stuents(busno , date):
     except:
         return jsonify(Show_Server_Error())
 
+@Role_Admin.route("/finish/session/<date>/<busno>")
+def Finish_Session(date , busno):
+    try:
+       STUDENTS_OTP.update_many({"date":date , "busno":int(busno)} , {"$set":{
+           "Started":"f"
+       }})
+       return jsonify({"Success":True})  
+    except:
+        return jsonify({"Success":False}) 
 
+
+
+@Role_Admin.route('/view-students/<busno>/<date>')
+def View_Students(busno , date):
+    try:
+        Students = STUDENTS_OTP.find({"busno":int(busno) , "date":date})
+        if not Students:
+            return "Students has Not Found" , 404
+        
+        total = STUDENTS_OTP.count_documents({"busno":int(busno) , "date":date})
+        return render_template('view.html' , data=Students , total=total)
         
 
-
-
+    except:
+        return 'Server Error'
 
