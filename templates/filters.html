@@ -1,0 +1,278 @@
+<div class="filters">
+  <div class="filter-controls">
+    <select class="form-select" id="ds">
+      <option selected disabled>Filter By Department</option>
+      <option value="all">Show All</option>
+      <option value="B.Tech AI&DS">B.Tech AI&DS</option>
+      <option value="B.Tech AI&ML">B.Tech AI&ML</option>
+      <option value="B.Tech Cyber Security">B.Tech Cyber Security</option>
+      <option value="BE.CSE">BE.CSE</option>
+      <option value="BE.ECE">BE.ECE</option>
+      <option value="BE.EEE">BE.EEE</option>
+      <option value="BE.Mechanical">BE.Mechanical</option>
+      <option value="MBA">MBA</option>
+      <option value="ARTS">ARTS</option>
+      <option value="NURSING">NURSING</option>
+    </select>
+
+    <select class="form-select" id="gender">
+      <option selected disabled>Filter By Gender</option>
+      <option value="all">Show All</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+
+    <select class="form-select" id="year">
+      <option selected disabled>Filter By Year</option>
+      <option value="all">Show All</option>
+      <option value="1st Year">1st Year</option>
+      <option value="2nd Year">2nd Year</option>
+      <option value="3rd Year">3rd Year</option>
+      <option value="4th Year">4th Year</option>
+    </select>
+
+    <div class="btn-group">
+      <button id="fil">Filter</button>
+      <button id="reset">Reset</button>
+      <button id="refresh">🔄 Refresh Table</button>
+    </div>
+  </div>
+
+  <table id="attendance-table">
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        <th>Department</th>
+        <th>Year</th>
+        <th>Gender</th>
+        <th>Attendance</th>
+      </tr>
+    </thead>
+    <tbody id="student"></tbody>
+  </table>
+</div>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: #f9fafb;
+    color: #111827;
+  }
+
+  .filters {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+  }
+
+  .filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+
+  .form-select {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: white;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    width: 200px;
+  }
+
+  .form-select:hover,
+  .form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  }
+
+  .btn-group button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .btn-group button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+  }
+
+  #reset {
+    background: #f59e0b;
+  }
+
+  #reset:hover {
+    background: #d97706;
+  }
+
+  #refresh {
+    background: #10b981;
+  }
+
+  #refresh:hover {
+    background: #059669;
+  }
+
+  table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 85%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  th, td {
+    padding: 14px 16px;
+    text-align: center;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  th {
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) {
+    background: #f3f4f6;
+  }
+
+  tr:hover {
+    background: #e0e7ff;
+    transition: 0.3s;
+  }
+
+  .refreshing {
+    animation: fade 0.5s ease-in-out;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0.5;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .form-select {
+      width: 100%;
+    }
+
+    table {
+      width: 95%;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+</style>
+
+<script>
+    async function getStudents() {
+      const res = await fetch(`/api/admin/get-students/37/${formatDate()}`);
+      return res.json();
+    }
+
+     function formatDate() {
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, "0");
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const year = today.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+
+    const studentBody = document.getElementById("student");
+    const table = document.getElementById("attendance-table");
+
+    function renderStudents(data) {
+      studentBody.innerHTML = "";
+      data.data.forEach(student => {
+        const tr = document.createElement("tr");
+
+        const nameTd = document.createElement("td");
+        nameTd.textContent = student.name;
+
+        const dep = document.createElement("td");
+        dep.textContent = student.dep;
+
+        const year = document.createElement("td");
+        year.textContent = student.year;
+
+        const gender = document.createElement("td");
+        gender.textContent = student.gender;
+
+        const statusTd = document.createElement("td");
+        statusTd.textContent = student.otp_verfied ? "Present" : "Absent";
+        statusTd.style.color = student.otp_verfied ? "#16a34a" : "#dc2626";
+      
+        tr.appendChild(nameTd);
+        tr.appendChild(dep);
+        tr.appendChild(year);
+        tr.appendChild(gender);
+        tr.appendChild(statusTd);
+        studentBody.appendChild(tr);
+      });
+    }
+
+    async function refreshTable() {
+      table.classList.add("refreshing");
+      const data = await getStudents();
+      renderStudents(data);
+      setTimeout(() => table.classList.remove("refreshing"), 500);
+    }
+    
+    function Filter_Students(busno , date , dep , year , gender){
+        return fetch(`/api/filter/${busno}/${date}?dep=${encodeURIComponent(dep)}&year=${encodeURIComponent(year)}&gender=${gender}`).then(res=>res.json())
+    }
+
+    let fillter = document.getElementById("fil")
+    let reset = document.getElementById("reset")
+    let ds = document.getElementById("ds")
+    let gender = document.getElementById("gender")
+    let year = document.getElementById("year") 
+    
+    fillter.onclick = function(){
+        if(!ds.value && !year.value && !gender.value){
+            alert("Pls Select All Filters Options")
+        }
+        Filter_Students('{{busno}}' , formatDate() , ds.value , year.value , gender.value).then(data=>{
+          renderStudents(data)
+        })
+    }
+    
+    let refresh = document.getElementById("refresh")
+
+    window.addEventListener("DOMContentLoaded", refreshTable);
+    refresh.addEventListener("click", refreshTable);
+</script>
