@@ -145,6 +145,8 @@
     
     
     gotp.onclick = function() {
+      gotp.disabled = true
+
       fetch(`/api/otp/generate/otp/{{admin.Bus_No}}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -156,7 +158,9 @@
         otp_code.innerText = data.OTP;
         setCountdown();
       })
-      .catch(err => console.error("Error generating OTP:", err));
+      .catch(err =>{
+      gotp.disabled = true
+      } )
     };
 
     let ExtCV = document.getElementById("ExtCV")
