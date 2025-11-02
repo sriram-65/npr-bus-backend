@@ -21,6 +21,8 @@ app.register_blueprint(Auth , url_prefix='/api/auth')
 app.register_blueprint(Otp , url_prefix='/api/otp')
 app.register_blueprint(Role_Student , url_prefix='/api')
 app.register_blueprint(Role_Admin , url_prefix='/api/admin')
+app.register_blueprint(Filter , url_prefix='/api/filter')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
