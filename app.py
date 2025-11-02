@@ -3,6 +3,7 @@ from auth.login import Auth
 from otp.otp import Otp
 from student_teacher.role_student import Role_Student
 from student_teacher.role_admin import Role_Admin
+from student_teacher.filter import Filter
 from flask_cors import CORS
 
 app = Flask(__name__)
