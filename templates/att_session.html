@@ -4,119 +4,535 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Session Dashboard</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #f59e0b;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --gray: #94a3b8;
+      --border: #e5e7eb;
+    }
+    
     body {
       font-family: "Poppins", sans-serif;
-      background: #f8fafc;
-      color: #222;
-      text-align: center;
+      background: var(--light);
+      color: var(--dark);
       margin: 0;
-      padding: 40px;
+      padding: 0;
     }
-
-    h1 {
-      color: #2563eb;
+    
+    .container-fluid {
+      padding: 20px;
     }
-
-    #countdown {
-      color: #dc2626;
-      font-weight: bold;
+    
+    .dashboard-header {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-left: 5px solid var(--primary);
+      position: relative;
+      overflow: hidden;
     }
-
-    #otp-code {
+    
+    .dashboard-header h1 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    
+    .date-display {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      background: var(--primary);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    
+    .info-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-top: 4px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .info-card h3 {
+      color: var(--dark);
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+    
+    .otp-display {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--success);
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(22, 163, 74, 0.1);
+      border-radius: 8px;
+      letter-spacing: 2px;
+      text-align: center;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .countdown {
       font-size: 1.5rem;
-      color: #16a34a;
+      font-weight: 700;
+      color: var(--danger);
+      margin: 10px 0;
+      text-align: center;
     }
-
-    button {
-      background: #2563eb;
+    
+    .btn-custom {
+      background: var(--primary);
       color: white;
       border: none;
       padding: 10px 20px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 1rem;
-      transition: background 0.3s, transform 0.1s;
-      margin: 8px;
+      transition: all 0.3s;
+      font-weight: 500;
+      margin: 5px;
     }
-
-    button:disabled {
-      background: #94a3b8;
+    
+    .btn-custom:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-custom:disabled {
+      background: var(--gray);
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
-
-    button:hover:not(:disabled) {
-      background: #1d4ed8;
-      transform: scale(1.05);
+    
+    .btn-success {
+      background: var(--success);
     }
-
-    table {
-      margin: 30px auto;
-      border-collapse: collapse;
-      width: 80%;
+    
+    .btn-warning {
+      background: var(--warning);
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+    }
+    
+    .filters-section {
       background: white;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border-radius: 10px;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .filter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .form-select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: white;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      width: 200px;
+    }
+    
+    .form-select:hover,
+    .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+    
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       overflow: hidden;
-      transition: 0.3s;
+      position: relative;
+      min-height: 400px;
     }
-
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
     th, td {
-      border: 1px solid #e5e7eb;
-      padding: 12px;
+      padding: 14px 16px;
+      text-align: center;
+      font-size: 0.95rem;
+      border-bottom: 1px solid var(--border);
     }
-
+    
     th {
-      background: #2563eb;
+      background: var(--primary);
       color: white;
+      font-weight: 600;
     }
-
+    
     tr:nth-child(even) {
-      background: #f3f4f6;
+      background: #f8fafc;
     }
-
+    
     tr:hover {
       background: #e0e7ff;
       transition: 0.3s;
     }
-
-   
+    
+    .status-present {
+      color: var(--success);
+      font-weight: 600;
+    }
+    
+    .status-absent {
+      color: var(--danger);
+      font-weight: 600;
+    }
+    
     .refreshing {
       animation: fade 0.5s ease-in-out;
     }
-
-    @keyframes fade {
-      from { opacity: 0.3; }
-      to { opacity: 1; }
+    
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      flex: 1;
+      margin: 10px;
+      min-width: 150px;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+    
+    .stat-present {
+      color: var(--success);
+    }
+    
+    .stat-absent {
+      color: var(--danger);
+    }
+    
+    .stat-total {
+      color: var(--primary);
+    }
+    
+    /* Loading Animations */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .skeleton-loader {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+      height: 20px;
+      margin: 10px 0;
+    }
+    
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    .table-skeleton {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    
+    .table-skeleton .skeleton-loader {
+      width: 90%;
+      margin: 8px 0;
+    }
+    
+    .table-skeleton .skeleton-loader:nth-child(1) { height: 30px; }
+    .table-skeleton .skeleton-loader:nth-child(2) { width: 80%; }
+    .table-skeleton .skeleton-loader:nth-child(3) { width: 85%; }
+    .table-skeleton .skeleton-loader:nth-child(4) { width: 75%; }
+    .table-skeleton .skeleton-loader:nth-child(5) { width: 82%; }
+    
+    .otp-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px;
+    }
+    
+    .otp-loading .loading {
+      width: 30px;
+      height: 30px;
+      border-width: 4px;
+    }
+    
+    @media (max-width: 768px) {
+      .form-select {
+        width: 100%;
+      }
+      
+      .filter-controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+      
+      .btn-custom {
+        width: 100%;
+      }
+      
+      .stats-container {
+        flex-direction: column;
+      }
+      
+      .date-display {
+        position: relative;
+        top: auto;
+        right: auto;
+        display: inline-block;
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Session Created</h1>
-  <p><b>Countdown:</b> <span id="countdown">25</span> sec</p>
-  <p><b>Admin:</b> {{admin._Name}}</p>
+  <div class="container-fluid">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1><i class="fas fa-chalkboard-teacher me-2"></i>Session Dashboard</h1>
+      <p class="mb-0">Welcome, <b>{{admin._Name}}</b> | Bus No: <b>{{admin.Bus_No}}</b></p>
+      <div class="date-display">
+        <i class="fas fa-calendar-alt me-2"></i><span id="current-date">Loading...</span>
+      </div>
+    </div>
+    
+    <div class="row">
+      <!-- OTP Section -->
+      <div class="col-lg-4">
+        <div class="info-card">
+          <h3><i class="fas fa-key me-2"></i>OTP Management</h3>
+          <div class="otp-display" id="otp-code">
+            <div class="otp-loading">
+              <div class="loading"></div> OTP
+            </div>
+          </div>
+          <div class="countdown">Expires in: <span id="countdown">25</span> sec</div>
+          <div class="d-grid gap-2 d-md-block">
+            <button class="btn-custom" id="gotp"><i class="fas fa-sync-alt me-2"></i>Generate OTP</button>
+            <button class="btn-custom btn-success" id="ExtCV"><i class="fas fa-file-export me-2"></i>Export to CSV</button>
+          </div>
+        </div>
+        
+        <!-- Stats Section -->
+        <div class="info-card">
+          <h3><i class="fas fa-chart-bar me-2"></i>Attendance Statistics</h3>
+          <div class="stats-container">
+            <div class="stat-card">
+              <div>Total Students</div>
+              <div class="stat-value stat-total" id="total-students">0</div>
+            </div>
+            <div class="stat-card">
+              <div>Present</div>
+              <div class="stat-value stat-present" id="present-students">0</div>
+            </div>
+            <div class="stat-card">
+              <div>Absent</div>
+              <div class="stat-value stat-absent" id="absent-students">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Filters and Table Section -->
+      <div class="col-lg-8">
+        <div class="filters-section">
+          <h3><i class="fas fa-filter me-2"></i>Filter Students</h3>
+          <div class="filter-controls">
+            <select class="form-select" id="ds">
+              <option selected disabled>Filter By Department</option>
+              <option value="all">Show All</option>
+              <option value="B.Tech AI&DS">B.Tech AI&DS</option>
+              <option value="B.Tech AI&ML">B.Tech AI&ML</option>
+              <option value="B.Tech Cyber Security">B.Tech Cyber Security</option>
+              <option value="BE.CSE">BE.CSE</option>
+              <option value="BE.ECE">BE.ECE</option>
+              <option value="BE.EEE">BE.EEE</option>
+              <option value="BE.Mechanical">BE.Mechanical</option>
+              <option value="MBA">MBA</option>
+              <option value="ARTS">ARTS</option>
+              <option value="NURSING">NURSING</option>
+            </select>
 
-  <h1>Here’s Your OTP: <b id="otp-code"></b></h1>
-  <div>
-    <button id="gotp">Generate OTP</button>
-    <button id="ExtCV">Export to CV</button>
-    <button id="refresh">🔄 Refresh Table</button>
+            <select class="form-select" id="gender">
+              <option selected disabled>Filter By Gender</option>
+              <option value="all">Show All</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+
+            <select class="form-select" id="year">
+              <option selected disabled>Filter By Year</option>
+              <option value="all">Show All</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+
+            <div class="btn-group">
+              <button class="btn-custom" id="fil"><i class="fas fa-filter me-2"></i>Apply Filters</button>
+              <button class="btn-custom btn-warning" id="reset"><i class="fas fa-undo me-2"></i>Reset</button>
+              <button class="btn-custom btn-success" id="refresh"><i class="fas fa-sync-alt me-2"></i>Refresh</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <h3><i class="fas fa-users me-2"></i>Student Attendance</h3>
+          <div class="table-responsive">
+            <table id="attendance-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Department</th>
+                  <th>Year</th>
+                  <th>Gender</th>
+                  <th>Attendance</th>
+                </tr>
+              </thead>
+              <tbody id="student"></tbody>
+            </table>
+          </div>
+          <div class="table-skeleton" id="table-skeleton">
+            <div class="skeleton-loader"></div>
+            <div class="skeleton-loader"></div>
+            <div class="skeleton-loader"></div>
+            <div class="skeleton-loader"></div>
+            <div class="skeleton-loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <h2>Student Attendance</h2>
-   {%  include 'filters.html' %}
- 
-
   <script>
+    // DOM Elements
     const gotp = document.getElementById("gotp");
     const otp_code = document.getElementById("otp-code");
     const countdown = document.getElementById("countdown");
+    const studentBody = document.getElementById("student");
+    const table = document.getElementById("attendance-table");
+    const refreshBtn = document.getElementById("refresh");
+    const filterBtn = document.getElementById("fil");
+    const resetBtn = document.getElementById("reset");
+    const exportBtn = document.getElementById("ExtCV");
+    const dsFilter = document.getElementById("ds");
+    const genderFilter = document.getElementById("gender");
+    const yearFilter = document.getElementById("year");
+    const totalStudentsEl = document.getElementById("total-students");
+    const presentStudentsEl = document.getElementById("present-students");
+    const absentStudentsEl = document.getElementById("absent-students");
+    const currentDateEl = document.getElementById("current-date");
+    const tableSkeleton = document.getElementById("table-skeleton");
+    
     let TIME = 25;
+    let timer = null;
 
+    // Initialize Date Display
+    function updateDateDisplay() {
+      const now = new Date();
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      };
+      currentDateEl.textContent = now.toLocaleDateString('en-US', options);
+    }
+
+    // Utility Functions
     function formatDate() {
       const today = new Date();
       const day = String(today.getDate()).padStart(2, "0");
@@ -130,73 +546,189 @@
       let timeLeft = TIME;
       countdown.innerText = timeLeft;
       
-      let timer = setInterval(() => {
+      if (timer) clearInterval(timer);
+      
+      timer = setInterval(() => {
         timeLeft--;
         countdown.innerText = timeLeft;
         
         if (timeLeft <= 0) {
           clearInterval(timer);
           gotp.disabled = false;
-          otp_code.innerText = "OTP Has Expired";
-          otp_code.style.color = "red";
+          otp_code.innerHTML = '<span class="text-danger">OTP Has Expired</span>';
         }
       }, 1000);
     }
-    
-    
-    gotp.onclick = function() {
-      gotp.disabled = true
 
-      fetch(`/api/otp/generate/otp/{{admin.Bus_No}}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ admin_uid: "{{admin.Uid}}" })
-      })
-      .then(res => res.json())
-      .then(data => {
-        otp_code.style.color = "#16a34a";
-        otp_code.innerText = data.OTP;
-        setCountdown();
-      })
-      .catch(err =>{
-      gotp.disabled = true
-      } )
+    // OTP Generation
+    gotp.onclick = function() {
+      gotp.disabled = true;
+      otp_code.innerHTML = '<div class="otp-loading"><div class="loading"></div> Generate Your OTP</div>';
+
+      // Simulate API call with timeout
+      setTimeout(() => {
+        fetch(`/api/otp/generate/otp/{{admin.Bus_No}}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ admin_uid: "{{admin.Uid}}" })
+        })
+        .then(res => res.json())
+        .then(data => {
+          otp_code.innerHTML = data.OTP;
+          setCountdown();
+        })
+        .catch(err => {
+          console.error("Error generating OTP:", err);
+          gotp.disabled = false;
+          otp_code.innerHTML = '<span class="text-danger">Error generating OTP</span>';
+        });
+      }, 1500); // Simulate network delay
     };
 
-    let ExtCV = document.getElementById("ExtCV")
-    ExtCV.onclick = function(){
-       if (!table) {
-         alert("No data found in table!");
-          return;
+    // Export to CSV
+    exportBtn.onclick = function() {
+      if (!table) {
+        alert("No data found in table!");
+        return;
       }
 
+      let csv = [];
+      const rows = table.querySelectorAll("tr");
       
-    let csv = [];
-    const rows = table.querySelectorAll("tr");
-    
-    
-    for (let row of rows) {
-      const cols = row.querySelectorAll("th, td");
-      let rowData = [];
-      cols.forEach(col => rowData.push(col.innerText.replace(/,/g, ""))); 
-      csv.push(rowData.join(","));
+      for (let row of rows) {
+        const cols = row.querySelectorAll("th, td");
+        let rowData = [];
+        cols.forEach(col => rowData.push(col.innerText.replace(/,/g, ""))); 
+        csv.push(rowData.join(","));
+      }
+
+      const csvContent = new Blob([csv.join("\n")], { type: "text/csv" });
+      const url = window.URL.createObjectURL(csvContent);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Attendance_${formatDate()}.csv`;
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    };
+
+    // Student Data Functions
+    async function getStudents() {
+      const res = await fetch(`/api/admin/get-students/37/${formatDate()}`);
+      return res.json();
     }
 
-    
-    const csvContent = new Blob([csv.join("\n")], { type: "text/csv" });
-    const url = window.URL.createObjectURL(csvContent);
+    function renderStudents(data) {
+      studentBody.innerHTML = "";
+      let presentCount = 0;
+      let absentCount = 0;
+      
+      data.data.forEach(student => {
+        const tr = document.createElement("tr");
 
-    
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Attendance_${formatDate()}.csv`;
-    a.click();
+        const nameTd = document.createElement("td");
+        nameTd.textContent = student.name;
 
-   
-    window.URL.revokeObjectURL(url);
+        const dep = document.createElement("td");
+        dep.textContent = student.dep;
+
+        const year = document.createElement("td");
+        year.textContent = student.year;
+
+        const gender = document.createElement("td");
+        gender.textContent = student.gender;
+
+        const statusTd = document.createElement("td");
+        const isPresent = student.otp_verfied;
+        statusTd.textContent = isPresent ? "Present" : "Absent";
+        statusTd.className = isPresent ? "status-present" : "status-absent";
+        
+        if (isPresent) presentCount++;
+        else absentCount++;
+
+        tr.appendChild(nameTd);
+        tr.appendChild(dep);
+        tr.appendChild(year);
+        tr.appendChild(gender);
+        tr.appendChild(statusTd);
+        studentBody.appendChild(tr);
+      });
+      
+      // Update statistics
+      const totalCount = presentCount + absentCount;
+      totalStudentsEl.textContent = totalCount;
+      presentStudentsEl.textContent = presentCount;
+      absentStudentsEl.textContent = absentCount;
     }
 
+    async function refreshTable() {
+      tableSkeleton.style.display = 'flex';
+      table.classList.add("refreshing");
+      
+      try {
+        // Simulate API delay
+        setTimeout(async () => {
+          const data = await getStudents();
+          renderStudents(data);
+          tableSkeleton.style.display = 'none';
+          table.classList.remove("refreshing");
+        }, 1200);
+      } catch (error) {
+        console.error("Error refreshing table:", error);
+        tableSkeleton.style.display = 'none';
+        table.classList.remove("refreshing");
+      }
+    }
 
+    // Filter Functions
+    function Filter_Students(busno, date, dep, year, gender) {
+      return fetch(`/api/filter/${busno}/${date}?dep=${encodeURIComponent(dep)}&year=${encodeURIComponent(year)}&gender=${gender}`)
+        .then(res => res.json());
+    }
+
+    filterBtn.onclick = function() {
+      if (!dsFilter.value && !yearFilter.value && !genderFilter.value) {
+        alert("Please select at least one filter option");
+        return;
+      }
+      
+      const dep = dsFilter.value || "all";
+      const year = yearFilter.value || "all";
+      const gender = genderFilter.value || "all";
+      
+      tableSkeleton.style.display = 'flex';
+      
+      Filter_Students('{{busno}}', formatDate(), dep, year, gender)
+        .then(data => {
+          renderStudents(data);
+          tableSkeleton.style.display = 'none';
+        })
+        .catch(error => {
+          console.error("Error filtering students:", error);
+          tableSkeleton.style.display = 'none';
+        });
+    };
+
+    resetBtn.onclick = function() {
+      dsFilter.value = "";
+      yearFilter.value = "";
+      genderFilter.value = "";
+      refreshTable();
+    };
+
+    // Initialize the dashboard
+    function initDashboard() {
+      updateDateDisplay();
+      refreshTable();
+      
+      // Update date every minute
+      setInterval(updateDateDisplay, 60000);
+    }
+
+    // Event Listeners
+    window.addEventListener("DOMContentLoaded", initDashboard);
+    refreshBtn.addEventListener("click", refreshTable);
   </script>
 </body>
 </html>
