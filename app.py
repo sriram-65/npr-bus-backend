@@ -5,6 +5,7 @@ from student_teacher.role_student import Role_Student
 from student_teacher.role_admin import Role_Admin
 from student_teacher.filter import Filter
 from flask_cors import CORS
+from datetime import timedelta
 
 app = Flask(__name__)
 CORS(app , supports_credentials=True)
@@ -16,6 +17,8 @@ app.config.update(
     SESSION_COOKIE_SECURE=True,    
     SESSION_PERMANENT=True
 )
+
+app.permanent_session_lifetime = timedelta(days=30)
 
 
 app.register_blueprint(Auth , url_prefix='/api/auth')
