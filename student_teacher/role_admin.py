@@ -112,7 +112,8 @@ def View_Students(busno , date):
         total = STUDENTS_OTP.count_documents({"busno":int(busno) , "date":date})
         return render_template('view.html' , data=Students , total=total)
         
-
     except:
         return 'Server Error'
+
+
 
