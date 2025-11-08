@@ -12,11 +12,11 @@ CORS(app , supports_credentials=True)
 
 app.secret_key = '@MAHAKALI@THUNAI'
 
-# app.config.update(
-#     SESSION_COOKIE_SAMESITE="None",
-#     SESSION_COOKIE_SECURE=True,    
-#     SESSION_PERMANENT=True
-# )
+app.config.update(
+    SESSION_COOKIE_SAMESITE="None",
+    SESSION_COOKIE_SECURE=True,    
+    SESSION_PERMANENT=True
+)
 
 app.permanent_session_lifetime = timedelta(days=30)
 
